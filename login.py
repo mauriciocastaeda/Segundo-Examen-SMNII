@@ -1,12 +1,14 @@
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
+from PyQt5.QtCore import QUrl
+import os
 
 class LoginWindow(QWebEngineView):
     def __init__(self, switch_to_register):
         super().__init__()
         self.switch_to_register = switch_to_register
+        self.settings().setAttribute(QWebEngineSettings.LocalContentCanAccessFileUrls, True)  # Enable local access
         self.load_html()
 
     def load_html(self):
-        with open("login.html", "r", encoding="utf-8") as file:
-            html_content = file.read()
-        self.setHtml(html_content)
+        file_path = os.path.abspath("login.html")
+        self.setUrl(QUrl.fromLocalFile(file_path))
