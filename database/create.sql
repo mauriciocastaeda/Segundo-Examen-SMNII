@@ -2,10 +2,10 @@
 CREATE TYPE tipo_prestamo_enum AS ENUM ('sueldo', 'monto_casa');
 
 -- 2. Crear la tabla Clientes
-CREATE TABLE Clientes (
+CREATE TABLE cliente (
     id_cliente SERIAL PRIMARY KEY,
     nombre_completo VARCHAR(100) NOT NULL,
-    RFC VARCHAR(13) NOT NULL UNIQUE,
+    rfc VARCHAR(13) NOT NULL UNIQUE,
     edad INT NOT NULL CHECK (edad >= 18),
     fecha_alta DATE NOT NULL DEFAULT CURRENT_DATE,
     telefono VARCHAR(15) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE Clientes (
 );
 
 -- 3. Crear la tabla Cotizaciones
-CREATE TABLE Cotizaciones (
+CREATE TABLE cotizacion (
     id_cotizacion SERIAL PRIMARY KEY,
     id_cliente INT NOT NULL,
     tipo_prestamo tipo_prestamo_enum NOT NULL,
@@ -27,12 +27,12 @@ CREATE TABLE Cotizaciones (
     plazo INT NOT NULL CHECK (plazo > 0),
     pago_mensual DECIMAL(15, 2) NOT NULL CHECK (pago_mensual >= 0),
     CONSTRAINT fk_cliente
-        FOREIGN KEY (id_cliente) REFERENCES Clientes (id_cliente)
+        FOREIGN KEY (id_cliente) REFERENCES cliente (id_cliente)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- 4. Crear la tabla Tabla_Amortizacion
-CREATE TABLE Tabla_Amortizacion (
+CREATE TABLE amortizacion (
     id_amortizacion SERIAL PRIMARY KEY,
     id_cotizacion INT NOT NULL,
     numero_pago INT NOT NULL CHECK (numero_pago > 0),
@@ -42,6 +42,6 @@ CREATE TABLE Tabla_Amortizacion (
     capital DECIMAL(15, 2) NOT NULL CHECK (capital >= 0),
     saldo_restante DECIMAL(15, 2) NOT NULL CHECK (saldo_restante >= 0),
     CONSTRAINT fk_cotizacion
-        FOREIGN KEY (id_cotizacion) REFERENCES Cotizaciones (id_cotizacion)
+        FOREIGN KEY (id_cotizacion) REFERENCES cotizacion (id_cotizacion)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
