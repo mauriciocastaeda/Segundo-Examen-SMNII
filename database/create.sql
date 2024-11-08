@@ -1,8 +1,11 @@
--- 1. Crear el tipo ENUM para 'tipo_prestamo'
-CREATE TYPE tipo_prestamo_enum AS ENUM ('sueldo', 'monto_casa');
+-- Crear el esquema 'segundop' si no existe
+CREATE SCHEMA IF NOT EXISTS segundop;
 
--- 2. Crear la tabla Clientes
-CREATE TABLE cliente (
+-- 1. Crear el tipo ENUM para 'tipo_prestamo' 
+CREATE TYPE segundop.tipo_prestamo_enum AS ENUM ('sueldo', 'monto_casa');
+
+-- 2. Crear la tabla 'cliente' 
+CREATE TABLE segundop.cliente (
     id_cliente SERIAL PRIMARY KEY,
     nombre_completo VARCHAR(100) NOT NULL,
     rfc VARCHAR(13) NOT NULL UNIQUE,
@@ -13,11 +16,11 @@ CREATE TABLE cliente (
     sueldo DECIMAL(15, 2) NOT NULL CHECK (sueldo >= 0)
 );
 
--- 3. Crear la tabla Cotizaciones
-CREATE TABLE cotizacion (
+-- 3. Crear la tabla 'cotizacion'
+CREATE TABLE segundop.cotizacion (
     id_cotizacion SERIAL PRIMARY KEY,
     id_cliente INT NOT NULL,
-    tipo_prestamo tipo_prestamo_enum NOT NULL,
+    tipo_prestamo segundop.tipo_prestamo_enum NOT NULL,
     monto_prestamo DECIMAL(15, 2) NOT NULL CHECK (monto_prestamo >= 0),
     fecha_cotizacion DATE NOT NULL DEFAULT CURRENT_DATE,
     guardado BOOLEAN NOT NULL DEFAULT FALSE,
@@ -27,12 +30,12 @@ CREATE TABLE cotizacion (
     plazo INT NOT NULL CHECK (plazo > 0),
     pago_mensual DECIMAL(15, 2) NOT NULL CHECK (pago_mensual >= 0),
     CONSTRAINT fk_cliente
-        FOREIGN KEY (id_cliente) REFERENCES cliente (id_cliente)
+        FOREIGN KEY (id_cliente) REFERENCES segundop.cliente (id_cliente)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- 4. Crear la tabla Tabla_Amortizacion
-CREATE TABLE amortizacion (
+-- 4. Crear la tabla 'amortizacion' 
+CREATE TABLE segundop.amortizacion (
     id_amortizacion SERIAL PRIMARY KEY,
     id_cotizacion INT NOT NULL,
     numero_pago INT NOT NULL CHECK (numero_pago > 0),
@@ -42,6 +45,6 @@ CREATE TABLE amortizacion (
     capital DECIMAL(15, 2) NOT NULL CHECK (capital >= 0),
     saldo_restante DECIMAL(15, 2) NOT NULL CHECK (saldo_restante >= 0),
     CONSTRAINT fk_cotizacion
-        FOREIGN KEY (id_cotizacion) REFERENCES cotizacion (id_cotizacion)
+        FOREIGN KEY (id_cotizacion) REFERENCES segundop.cotizacion (id_cotizacion)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
